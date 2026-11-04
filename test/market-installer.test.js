@@ -245,7 +245,7 @@ describe('desktop plugin market installer', () => {
   })
 
   it('exposes the active Desktop profile without inferring it from argv', async () => {
-    const home = join('C:\\Users\\tester', 'AppData', 'Roaming', 'dsh-desktop', 'harness')
+    const home = join('C:\\Users\\tester', 'AppData', 'Roaming', 'autocad-ai', 'harness')
     const profiles = createDesktopProfilesService(home)
 
     expect(profiles.current).toEqual({

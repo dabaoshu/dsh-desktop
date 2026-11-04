@@ -32,7 +32,7 @@ describe.runIf(process.platform === 'darwin')('node-pty in the packaged asar lay
     // the one to the other; the external-helper override must also preserve this default.
     const root = await mkdtemp(join(tmpdir(), 'dsh-node-pty-'))
     roots.push(root)
-    const resources = join(root, 'DSH Desktop.app', 'Contents', 'Resources')
+    const resources = join(root, 'autoCad AI.app', 'Contents', 'Resources')
     const packaged = join(resources, layout, 'node_modules', 'node-pty')
     await cp(nodePtyRoot, packaged, { recursive: true })
     await cp(join(nodePtyRoot, 'prebuilds'), join(resources, 'app.asar.unpacked', 'node_modules', 'node-pty', 'prebuilds'), { recursive: true })

@@ -78,7 +78,7 @@ describe('sign-windows-unpacked', () => {
       '--tsretrywait',
       '10',
       '--name',
-      'DSH Desktop',
+      'autoCad AI',
       '--url',
       'https://www.dshdesktop.com',
       'C:\\test\\app.exe'
@@ -86,7 +86,7 @@ describe('sign-windows-unpacked', () => {
   })
 
   it('finds every PE by content, including nested and extensionless binaries', async () => {
-    writeFileSync(join(tempDir, 'DSH Desktop.exe'), minimalPe())
+    writeFileSync(join(tempDir, 'autoCad AI.exe'), minimalPe())
     writeFileSync(join(tempDir, 'ffmpeg.dll'), minimalPe())
     writeFileSync(join(tempDir, 'LICENSE.electron.txt'), 'ignore me')
 
@@ -122,7 +122,7 @@ describe('sign-windows-unpacked', () => {
 
     const binaries = await findSignableBinaries(tempDir)
 
-    expect(binaries).toContain(join(tempDir, 'DSH Desktop.exe'))
+    expect(binaries).toContain(join(tempDir, 'autoCad AI.exe'))
     expect(binaries).toContain(join(tempDir, 'ffmpeg.dll'))
     expect(binaries).toContain(join(nodeBinDir, 'node.exe'))
     expect(binaries).toContain(join(koffiDir, 'koffi.node'))
@@ -153,7 +153,7 @@ describe('sign-windows-unpacked', () => {
   })
 
   it('fails on damaged PE content instead of skipping it', async () => {
-    writeFileSync(join(tempDir, 'DSH Desktop.exe'), minimalPe())
+    writeFileSync(join(tempDir, 'autoCad AI.exe'), minimalPe())
     writeFileSync(join(tempDir, 'bad.exe'), Buffer.from('MZbroken'))
     await expect(findSignableBinaries(tempDir)).rejects.toThrow('Invalid PE header')
   })

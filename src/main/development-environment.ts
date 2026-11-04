@@ -1,12 +1,14 @@
+import { USER_DATA_DIR, USER_DATA_DIR_DEV } from '../shared/brand'
+
 /** Development overrides isolate concurrent worktrees without changing production identity. */
 export function developmentEnvironment(development: boolean, defaultHarnessPort: number, env: NodeJS.ProcessEnv = process.env): {
   profile: string
   harnessPort: number
   mobilePort: number
 } {
-  if (!development) return { profile: 'dsh-desktop', harnessPort: defaultHarnessPort, mobilePort: 43127 }
-  const profile = env.DSH_DEV_PROFILE || 'dsh-desktop-dev'
-  if (!/^[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$/.test(profile) || profile === 'dsh-desktop') {
+  if (!development) return { profile: USER_DATA_DIR, harnessPort: defaultHarnessPort, mobilePort: 43127 }
+  const profile = env.DSH_DEV_PROFILE || USER_DATA_DIR_DEV
+  if (!/^[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$/.test(profile) || profile === USER_DATA_DIR) {
     throw new Error('DSH_DEV_PROFILE must be a separate development directory name.')
   }
   const port = (value: string | undefined, fallback: number, name: string): number => {

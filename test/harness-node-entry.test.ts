@@ -567,10 +567,10 @@ describe('packaged pnpm invocation', () => {
     const invocation = buildPackagedPnpmInvocation({
       [PACKAGED_PNPM_ENTRY_ENV]: 'C:\\app\\pnpm.cjs',
       [PACKAGED_PNPM_RUNNER_ENV]: 'C:\\app\\pnpm-runner.mjs'
-    }, 'C:\\app\\DSH Desktop.exe', () => true)
+    }, 'C:\\app\\autoCad AI.exe', () => true)
 
     expect(invocation).toEqual({
-      command: 'C:\\app\\DSH Desktop.exe',
+      command: 'C:\\app\\autoCad AI.exe',
       args: ['C:\\app\\pnpm-runner.mjs', 'C:\\app\\pnpm.cjs'],
       env: { ELECTRON_RUN_AS_NODE: '1' }
     })
@@ -580,20 +580,20 @@ describe('packaged pnpm invocation', () => {
     const invocation = buildPackagedPnpmInvocation({
       [PACKAGED_PNPM_ENTRY_ENV]: 'C:\\app\\pnpm.cjs',
       [PACKAGED_PNPM_RUNNER_ENV]: 'C:\\missing\\pnpm-runner.mjs'
-    }, 'C:\\app\\DSH Desktop.exe', (path) => path === 'C:\\app\\pnpm.cjs')
+    }, 'C:\\app\\autoCad AI.exe', (path) => path === 'C:\\app\\pnpm.cjs')
 
     expect(invocation).toEqual({
-      command: 'C:\\app\\DSH Desktop.exe',
+      command: 'C:\\app\\autoCad AI.exe',
       args: ['C:\\app\\pnpm.cjs'],
       env: { ELECTRON_RUN_AS_NODE: '1' }
     })
   })
 
   it('leaves plugin manager on PATH pnpm when the desktop did not inject an entry', () => {
-    expect(buildPackagedPnpmInvocation({}, 'C:\\app\\DSH Desktop.exe', () => true)).toBeUndefined()
+    expect(buildPackagedPnpmInvocation({}, 'C:\\app\\autoCad AI.exe', () => true)).toBeUndefined()
     expect(buildPackagedPnpmInvocation({
       [PACKAGED_PNPM_ENTRY_ENV]: 'C:\\missing\\pnpm.cjs'
-    }, 'C:\\app\\DSH Desktop.exe', () => false)).toBeUndefined()
+    }, 'C:\\app\\autoCad AI.exe', () => false)).toBeUndefined()
   })
 
   it('passes the packaged invocation into runCli and otherwise calls it with no arguments', async () => {

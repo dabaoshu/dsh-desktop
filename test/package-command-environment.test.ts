@@ -31,7 +31,7 @@ describe.runIf(process.platform !== 'win32')('packageCommandEnvironment', () => 
     const shims = join(dshHome, '.desktop-bin')
     await mkdir(shims, { recursive: true })
     // The shape the previous macOS release wrote, naming its bundled Node.
-    const removedNode = '/Applications/DSH Desktop.app/Contents/Resources/app.asar.unpacked/node_modules/node/bin/node'
+    const removedNode = '/Applications/autoCad AI.app/Contents/Resources/app.asar.unpacked/node_modules/node/bin/node'
     await writeFile(join(shims, 'node'), `#!/bin/sh\nexec '${removedNode}' "$@"\n`)
     await chmod(join(shims, 'node'), 0o755)
 

@@ -108,7 +108,7 @@ export function buildJsignArgs({
   pinFile,
   targetFile,
   tsaUrl = 'http://timestamp.digicert.com',
-  name = 'DSH Desktop',
+  name = 'autoCad AI',
   url = 'https://www.dshdesktop.com'
 }) {
   return [

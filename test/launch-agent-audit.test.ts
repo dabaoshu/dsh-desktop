@@ -7,8 +7,8 @@ import {
   type LaunchAgentRecord
 } from '../src/main/state/launch-agent-audit'
 
-const appBundle = '/Applications/DSH Desktop.app'
-const helper = `${appBundle}/Contents/Frameworks/DSH Desktop Helper.app/Contents/MacOS/DSH Desktop Helper`
+const appBundle = '/Applications/autoCad AI.app'
+const helper = `${appBundle}/Contents/Frameworks/autoCad AI Helper.app/Contents/MacOS/autoCad AI Helper`
 
 describe('daemonised app binary detection', () => {
   it('flags an agent running the app binary without the node runtime flag', () => {
@@ -51,14 +51,14 @@ describe('daemonised app binary detection', () => {
   })
 
   it('does not treat a sibling bundle as our own', () => {
-    const sibling = '/Applications/DSH Desktop Dev.app/Contents/MacOS/DSH Desktop Dev'
+    const sibling = '/Applications/autoCad AI Dev.app/Contents/MacOS/autoCad AI Dev'
 
     expect(describesDaemonisedAppBinary({ Label: 'com.dsh.dev', ProgramArguments: [sibling] }, appBundle))
       .toBe(false)
   })
 
   it('does not treat a bundle whose name merely extends ours as our own', () => {
-    const lookalike = '/Applications/DSH Desktop.app.disabled/Contents/MacOS/DSH Desktop'
+    const lookalike = '/Applications/autoCad AI.app.disabled/Contents/MacOS/autoCad AI'
 
     expect(describesDaemonisedAppBinary({ Label: 'com.dsh.old', ProgramArguments: [lookalike] }, appBundle))
       .toBe(false)
@@ -118,8 +118,8 @@ describe('launch agent repair', () => {
 
 describe('app bundle path', () => {
   it('finds the bundle root above the executable', () => {
-    expect(appBundlePathFromExecutable('/Applications/DSH Desktop.app/Contents/MacOS/DSH Desktop'))
-      .toBe('/Applications/DSH Desktop.app')
+    expect(appBundlePathFromExecutable('/Applications/autoCad AI.app/Contents/MacOS/autoCad AI'))
+      .toBe('/Applications/autoCad AI.app')
   })
 
   it('stops at the outermost bundle so helpers map to the app itself', () => {

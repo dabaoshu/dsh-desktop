@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import { isUserInitiatedInstance } from '../src/main/launchd-guard'
 
-const mainBinary = '/Applications/DSH Desktop.app/Contents/MacOS/DSH Desktop'
+const mainBinary = '/Applications/autoCad AI.app/Contents/MacOS/autoCad AI'
 const helperBinary =
-  '/Applications/DSH Desktop.app/Contents/Frameworks/DSH Desktop Helper.app/Contents/MacOS/DSH Desktop Helper'
+  '/Applications/autoCad AI.app/Contents/Frameworks/autoCad AI Helper.app/Contents/MacOS/autoCad AI Helper'
 
 describe('second instance intent', () => {
   it('treats a plain application launch as the user asking for the window', () => {
