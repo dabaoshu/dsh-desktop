@@ -12,6 +12,8 @@ import { mountBootCover, shouldReleaseBootCover } from './boot-cover'
 import { markWindowsTitlebar, mountWindowsTitlebarLayout } from './windows-titlebar'
 import { mountMacosWindowChrome } from './macos-window-chrome'
 import { createHostPathsBridge, HOST_PATHS_BRIDGE } from './host-paths'
+import { mountInternalAuthUi, openInternalAuthDialog } from './internal-auth-ui'
+import { INTERNAL_AUTH_IPC } from '../shared/internal-auth'
 
 if (process.platform === 'darwin') {
   const dispose = mountMacosWindowChrome(document, listener => {
@@ -317,6 +319,7 @@ async function mountSafeModeBanner(): Promise<void> {
 }
 
 function initializeUi(): void {
+  mountInternalAuthUi()
   if (process.platform === 'win32') {
     mountWindowsTitlebarLayout({ document, ipcRenderer })
   }
@@ -524,7 +527,12 @@ contextBridge.exposeInMainWorld(
     setBuiltInImageGenerationEnabled: (enabled: boolean): Promise<{ ok: boolean; enabled?: boolean; restartRequired?: boolean; reason?: string }> =>
       ipcRenderer.invoke('desktop-host-plugin:set-enabled', enabled),
     uninstallMarket: (): Promise<{ ok: boolean }> => ipcRenderer.invoke('market:uninstall'),
-    openInFinder: (path: string): Promise<{ ok: boolean }> => ipcRenderer.invoke('harness:open-in-finder', path)
+    openInFinder: (path: string): Promise<{ ok: boolean }> => ipcRenderer.invoke('harness:open-in-finder', path),
+    /** 内部登录态（不含 token）；未登录时云能力为 false。 */
+    getInternalAuthStatus: (): Promise<unknown> => ipcRenderer.invoke(INTERNAL_AUTH_IPC.status),
+    openInternalAuthDialog: (): void => {
+      openInternalAuthDialog()
+    }
   })
 )
 

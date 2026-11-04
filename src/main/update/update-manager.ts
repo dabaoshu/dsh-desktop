@@ -123,19 +123,34 @@ export function getUpdateStatus(): UpdateStatus {
   return { ...status, locale: updateLocale?.() }
 }
 
-export function registerUpdateHandlers(options: { locale?: () => 'en' | 'zh' } = {}): void {
+/**
+ * @param options.locale 更新条文案语言
+ * @param options.assertCloudUpdates 云版本目录门闩；未提供则不拦截（测试兼容）
+ */
+export function registerUpdateHandlers(
+  options: {
+    locale?: () => 'en' | 'zh'
+    /** 未登录时拒绝远程版本列表 / 指定版本安装。 */
+    assertCloudUpdates?: () => void
+  } = {}
+): void {
   updateLocale = options.locale ?? updateLocale
   if (handlersRegistered) return
   handlersRegistered = true
+  const assertCloudUpdates = options.assertCloudUpdates
   ipcMain.handle('updates:status', () => getUpdateStatus())
   ipcMain.handle('updates:check', () => checkForUpdates(true))
   ipcMain.handle('updates:install', () => installDownloadedUpdate())
   ipcMain.handle('updates:skip', (_event, version: unknown) => skipUpdate(version))
   ipcMain.handle('updates:download', () => downloadAvailableUpdate())
-  ipcMain.handle('updates:list-versions', () => fetchAvailableReleases(app.getVersion()))
-  ipcMain.handle('updates:install-version', (_event, version: unknown) =>
-    installSpecificVersion(version)
-  )
+  ipcMain.handle('updates:list-versions', () => {
+    assertCloudUpdates?.()
+    return fetchAvailableReleases(app.getVersion())
+  })
+  ipcMain.handle('updates:install-version', (_event, version: unknown) => {
+    assertCloudUpdates?.()
+    return installSpecificVersion(version)
+  })
 }
 
 function skipFile(): string {

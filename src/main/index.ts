@@ -29,6 +29,7 @@ import {
   ipcMain,
   Menu,
   nativeTheme,
+  safeStorage,
   shell,
   Tray,
   utilityProcess,
@@ -39,6 +40,14 @@ import {
 import { HarnessShell } from './harness-shell'
 import { HARNESS_SHELL_URL, HARNESS_BOOT_DOCUMENT_CHANNEL, HARNESS_BOOT_CHANNEL, HARNESS_BOOT_FAILED_CHANNEL, isHarnessShellUrl, isHarnessBootPage } from '../shared/harness-boot'
 import { PRODUCT_NAME, PRODUCT_NAME_DEV, USER_DATA_DIR } from '../shared/brand'
+import {
+  broadcastInternalAuthStatus,
+  loadInternalAuthConfig,
+  AuthSessionStore,
+  InternalAuthService,
+  registerInternalAuthIpc,
+  requestInternalAuthDialog
+} from './enterprise'
 import {
   DEFAULT_HARNESS_PORT,
   extractDuplicateAgentPresetId,
@@ -252,6 +261,8 @@ const PLUGIN_RECOVERY_ACTIONS = new Set<PluginRecoveryAction>([
 let mainWindow: BrowserWindow | undefined
 let mobileWindow: BrowserWindow | undefined
 let tray: Tray | undefined
+/** 内部登录门闩；未登录不挡本地启动，只禁用云/版本能力。 */
+let internalAuthService: InternalAuthService | undefined
 let runtime: HarnessRuntime
 const harnessBootFailures = new HarnessBootFailures()
 let harnessShell: HarnessShell
@@ -2107,6 +2118,9 @@ async function executeDesktopMenuCommand(command: DesktopMenuCommand): Promise<n
     case 'show-harness-log':
       shell.showItemInFolder(join(app.getPath('logs'), 'harness.log'))
       break
+    case 'internal-auth':
+      requestInternalAuthDialog(window)
+      break
     case 'check-for-updates':
       await checkForUpdates(true)
       break
@@ -2159,6 +2173,10 @@ async function executeDesktopMenuCommand(command: DesktopMenuCommand): Promise<n
     case 'quit':
       app.quit()
       break
+    default: {
+      const _exhaustive: never = command
+      throw new Error(`Unhandled desktop menu command: ${String(_exhaustive)}`)
+    }
   }
 
   return isZoomMenuCommand(command) ? contents.getZoomFactor() : undefined
@@ -3339,6 +3357,12 @@ function installMenu(): void {
               accelerator: 'CmdOrCtrl+U',
               click: () => void checkForUpdates(true).catch(showUnexpectedError)
             },
+            {
+              label: isChinese ? '内部账号…' : 'Internal Account…',
+              click: () => {
+                if (mainWindow && !mainWindow.isDestroyed()) requestInternalAuthDialog(mainWindow)
+              }
+            },
             // 上游「了解企业版」入口已移除：本仓为 autoCad AI 壳 fork，不导向 dshdesktop.com 企业版。
             { type: 'separator' as const },
             // Role titles stay in Electron's English and can be rewritten to the
@@ -3388,6 +3412,12 @@ function installMenu(): void {
         {
           label: isChinese ? '查看 Harness 日志' : 'Show Harness Log',
           click: () => shell.showItemInFolder(join(app.getPath('logs'), 'harness.log'))
+        },
+        {
+          label: isChinese ? '内部账号…' : 'Internal Account…',
+          click: () => {
+            if (mainWindow && !mainWindow.isDestroyed()) requestInternalAuthDialog(mainWindow)
+          }
         },
         ...(process.platform === 'darwin'
           ? []
@@ -3516,7 +3546,31 @@ async function bootstrap(): Promise<void> {
   installDesktopProtocol(desktopResourcePath, request => harnessShell.handle(request))
   if (process.platform === 'darwin') app.dock?.setIcon(desktopIconPath())
   launchDirectory = await ensureLaunchRoot(app.getPath('userData'))
-  registerUpdateHandlers({ locale: harnessLocale })
+  internalAuthService = new InternalAuthService({
+    config: loadInternalAuthConfig(),
+    store: new AuthSessionStore({
+      directory: app.getPath('userData'),
+      crypto: {
+        isEncryptionAvailable: () => safeStorage.isEncryptionAvailable(),
+        encryptString: (plain) => safeStorage.encryptString(plain),
+        decryptString: (encrypted) => safeStorage.decryptString(encrypted)
+      }
+    }),
+    onChanged: (status) => {
+      broadcastInternalAuthStatus(status)
+      // 登录态变化后刷新菜单标签（若后续按状态改文案）。
+      installMenu()
+    }
+  })
+  await internalAuthService.initialize()
+  registerInternalAuthIpc({
+    service: internalAuthService,
+    assertTrustedSender: assertTrustedMainWindowEvent
+  })
+  registerUpdateHandlers({
+    locale: harnessLocale,
+    assertCloudUpdates: () => internalAuthService?.assertCapability('cloudUpdates')
+  })
   nativeTheme.themeSource = harnessThemePreference()
   ensureTray()
   const dshHome = join(app.getPath('userData'), 'harness')
