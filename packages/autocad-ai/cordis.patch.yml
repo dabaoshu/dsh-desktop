@@ -1,0 +1,5 @@
+# Plugin tree insert for autocad-ai.
+# id is the Harness plugin-row identifier; name must match the npm package name.
+- insert:
+    - id: autocad-ai
+      name: autocad-ai

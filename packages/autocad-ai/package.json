@@ -1,0 +1,43 @@
+{
+  "name": "autocad-ai",
+  "version": "0.0.1",
+  "description": "Phase 0 scaffold: AutoCAD AI Cordis plugin for DSH Desktop (echo tool only; MCP/OCCT hooks deferred).",
+  "type": "module",
+  "main": "./index.js",
+  "exports": {
+    ".": "./index.js",
+    "./package.json": "./package.json",
+    "./cordis.patch.yml": "./cordis.patch.yml"
+  },
+  "files": [
+    "index.js",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "license": "MIT",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dabaoshu/dsh-desktop.git",
+    "directory": "packages/autocad-ai"
+  },
+  "keywords": [
+    "dsh-plugin",
+    "autocad-ai",
+    "cad",
+    "scaffold"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "dependencies": {
+    "@deepseek-ai/schemastery": "3.18.6-alpha.1"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.0.2 || ^4.0.6-alpha.1",
+    "@deepseek-ai/dsh-tools": "^0.1.2-rc.1 || ^0.1.7-rc.1 || ^0.1.7-rc.2 || ^0.2.0-rc.1 || ^0.2.1-rc.1 || ^0.2.2-alpha.2"
+  }
+}
