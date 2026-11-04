@@ -1,0 +1,21 @@
+# 占位示例：将来由 autocad-ai 插件（或 Profile patch）拉起本机 sidecar。
+#
+# 字段来自钉死版 @deepseek-ai/dsh-mcp-client@0.2.2-alpha.2 公开 README
+# （transport: stdio + command/args）。不要把本文件当成已接线的生产配置：
+# - 本仓库 Phase 0 未把本条目写入 build/dsh-desktop.patch.yml
+# - 未在 autocad-ai 内调用未见的 harness 私有 API
+# - 路径请换成本机绝对路径；Windows 生产 sidecar 将换成 .NET 可执行文件
+#
+# 参考工具公开名形态：mcp__<serverName>__<rawName>
+# → 本例为 mcp__autocad_local__autocad_ping
+
+- id: mcp-autocad-local
+  name: '@deepseek-ai/dsh-mcp-client'
+  config:
+    serverName: autocad_local
+    transport: stdio
+    command: node
+    args:
+      - /absolute/path/to/dsh-desktop/packages/mcp-sidecar/bin/mcp-sidecar.js
+    # 可选：cwd / env / failOnStartupError / toolCallTimeoutMs / reconnect
+    failOnStartupError: false
