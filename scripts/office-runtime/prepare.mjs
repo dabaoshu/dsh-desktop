@@ -13,6 +13,23 @@ const require = createRequire(import.meta.url)
 const project = resolve(import.meta.dirname, '../..')
 const lock = JSON.parse(await readFile(new URL('./lock.json', import.meta.url), 'utf8'))
 
+/** Default per-asset fetch deadline (headers + body). Override with DSH_OFFICE_DOWNLOAD_TIMEOUT_MS. */
+export const DEFAULT_OFFICE_DOWNLOAD_TIMEOUT_MS = 180_000
+
+/**
+ * Parse the per-asset Office download timeout from the environment.
+ * Invalid or non-positive values fall back to {@link DEFAULT_OFFICE_DOWNLOAD_TIMEOUT_MS}.
+ * @param {NodeJS.ProcessEnv} [env]
+ * @returns {number}
+ */
+export function officeDownloadTimeoutMs(env = process.env) {
+  const raw = env.DSH_OFFICE_DOWNLOAD_TIMEOUT_MS
+  if (raw == null || raw === '') return DEFAULT_OFFICE_DOWNLOAD_TIMEOUT_MS
+  const value = Number(raw)
+  if (!Number.isFinite(value) || value <= 0) return DEFAULT_OFFICE_DOWNLOAD_TIMEOUT_MS
+  return Math.trunc(value)
+}
+
 export function officeTarget(platform = process.platform, arch = process.arch) {
   const target = `${platform === 'darwin' ? 'mac' : platform === 'win32' ? 'win' : platform}-${arch}`
   if (!Object.hasOwn(lock.targets, target)) throw new Error(`Office runtime: unsupported native target ${platform}/${arch}`)
@@ -28,9 +45,32 @@ export async function downloadAsset(url, sha256, cache) {
     bytes = await readFile(destination)
   } catch (error) {
     if (error.code !== 'ENOENT') throw error
-    const response = await fetch(url, { signal: AbortSignal.timeout(180_000) })
+    const timeoutMs = officeDownloadTimeoutMs()
+    let response
+    try {
+      response = await fetch(url, { signal: AbortSignal.timeout(timeoutMs) })
+    } catch (fetchError) {
+      // AbortSignal.timeout surfaces as DOMException TimeoutError; keep the URL and override hint.
+      if (fetchError && typeof fetchError === 'object' && fetchError.name === 'TimeoutError') {
+        throw new Error(
+          `Office runtime download: timed out after ${timeoutMs}ms for ${url} (set DSH_OFFICE_DOWNLOAD_TIMEOUT_MS to raise the limit)`,
+          { cause: fetchError }
+        )
+      }
+      throw fetchError
+    }
     if (!response.ok) throw new Error(`Office runtime download: HTTP ${response.status} ${url}`)
-    bytes = Buffer.from(await response.arrayBuffer())
+    try {
+      bytes = Buffer.from(await response.arrayBuffer())
+    } catch (bodyError) {
+      if (bodyError && typeof bodyError === 'object' && bodyError.name === 'TimeoutError') {
+        throw new Error(
+          `Office runtime download: timed out after ${timeoutMs}ms for ${url} (set DSH_OFFICE_DOWNLOAD_TIMEOUT_MS to raise the limit)`,
+          { cause: bodyError }
+        )
+      }
+      throw bodyError
+    }
   }
   if (createHash('sha256').update(bytes).digest('hex') !== sha256) {
     throw new Error(`Office runtime download: checksum mismatch for ${url}`)

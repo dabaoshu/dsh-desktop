@@ -6,7 +6,14 @@ import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { afterEach, describe, expect, it } from 'vitest'
-import { officeTarget, downloadAsset, unpackWheel, prepareOfficeRuntime } from '../scripts/office-runtime/prepare.mjs'
+import {
+  officeTarget,
+  downloadAsset,
+  unpackWheel,
+  prepareOfficeRuntime,
+  officeDownloadTimeoutMs,
+  DEFAULT_OFFICE_DOWNLOAD_TIMEOUT_MS,
+} from '../scripts/office-runtime/prepare.mjs'
 import { officeCliAttempts, officeCliCommand, officeCliTimedOut, officeCliTimeoutMs, runOfficeCli } from '../scripts/office-runtime/prepare-templates.mjs'
 import { HarnessRuntime } from '../src/main/runtime/harness-runtime'
 import { prepareHostPluginSourcesPatch } from '../src/main/state/host-plugin-sources'
@@ -63,6 +70,15 @@ describe('Office template preview limits', () => {
 })
 
 describe('Office runtime assembly', () => {
+  it('reads DSH_OFFICE_DOWNLOAD_TIMEOUT_MS with a safe default', () => {
+    expect(officeDownloadTimeoutMs({})).toBe(DEFAULT_OFFICE_DOWNLOAD_TIMEOUT_MS)
+    expect(officeDownloadTimeoutMs({ DSH_OFFICE_DOWNLOAD_TIMEOUT_MS: '600000' })).toBe(600_000)
+    expect(officeDownloadTimeoutMs({ DSH_OFFICE_DOWNLOAD_TIMEOUT_MS: '90000.9' })).toBe(90_000)
+    expect(officeDownloadTimeoutMs({ DSH_OFFICE_DOWNLOAD_TIMEOUT_MS: '0' })).toBe(DEFAULT_OFFICE_DOWNLOAD_TIMEOUT_MS)
+    expect(officeDownloadTimeoutMs({ DSH_OFFICE_DOWNLOAD_TIMEOUT_MS: '-1' })).toBe(DEFAULT_OFFICE_DOWNLOAD_TIMEOUT_MS)
+    expect(officeDownloadTimeoutMs({ DSH_OFFICE_DOWNLOAD_TIMEOUT_MS: 'nope' })).toBe(DEFAULT_OFFICE_DOWNLOAD_TIMEOUT_MS)
+  })
+
   it('runs the full packaging gate against the current Office skills and physical resources', async () => {
     const resources = await temporary()
     await symlink(join(root, '.build/office-runtime'), join(resources, 'office-runtime'), process.platform === 'win32' ? 'junction' : 'dir')
