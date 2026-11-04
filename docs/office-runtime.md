@@ -8,6 +8,8 @@ Python 和 wheel 的固定 URL/SHA-256 来源：[上游固定提交的 primary-r
 
 构建阶段下载并校验固定资源、离线解包 wheel，不运行 pip install，不依赖系统 Python。生成物位于忽略目录 `.build`；构建失败不能继续消费旧 payload。包内验证必须实际调用 Python 创建、重新读取 DOCX/PPTX/XLSX、检查 ZIP 正斜杠路径，执行技能结构检查及 LibreOffice 转换。Windows 和 Intel Mac 的执行验收须在对应原生 runner 完成；其他平台的成功不可替代。
 
+`npm test` / `npm run build` / `npm run dev` 会先跑 `office:prepare`。首次（或缓存未命中时）从 `github.com/astral-sh/python-build-standalone` 与 `files.pythonhosted.org` 拉取固定 tar/wheel；每个资源默认 180 秒超时。网络较慢时可设置 `DSH_OFFICE_DOWNLOAD_TIMEOUT_MS`（毫秒，例如 `600000`）加长；已通过 SHA-256 校验的文件缓存在 `.build/office-downloads`，命中后不再联网。仅关心非 Office 单测时可直接调用 `npx vitest run <test-file>`，绕过 npm `pretest`。
+
 本地 macOS arm64 开发目录包实测 Office 资源约 205 MiB（包含 Python、numpy/pandas 与 Office 库）；这不是 DMG/NSIS 压缩增量。首次运行不做联网安装或 Profile 复制；安装时间增量取决于目标安装器的解压，需要原生产物对照测量。
 
 ## 通用 PPT 与模板 PPT
