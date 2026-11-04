@@ -15,30 +15,37 @@ describe('Enterprise app menu entry', () => {
     const hide = vi.fn()
     const quit = vi.fn()
     const sendActionToFirstResponder = vi.fn()
+    const requestInternalAuthDialog = vi.fn()
+    const mainWindow = { isDestroyed: () => false }
     const context = {
       harnessLocale: () => locale, process: { platform: 'darwin' }, app: { name: 'autoCad AI', hide, quit },
       shell: { openExternal }, showUnexpectedError, developmentRepairDemo: undefined,
       PRODUCT_NAME: 'autoCad AI',
+      mainWindow,
+      requestInternalAuthDialog,
       Menu: { buildFromTemplate, setApplicationMenu: vi.fn(), sendActionToFirstResponder }
     }
     vm.runInNewContext(ts.transpile(source.slice(start, end)) + '\ninstallMenu()', context)
     const menu = buildFromTemplate.mock.calls[0]?.[0][0].submenu
     expect(menu[0].label).toBe(locale === 'zh' ? '关于 autoCad AI' : 'About autoCad AI')
     expect(menu[1].label).toBe(locale === 'zh' ? '检查更新…' : 'Check for Updates…')
+    expect(menu[2].label).toBe(locale === 'zh' ? '内部账号…' : 'Internal Account…')
     expect(menu.map((item: { label?: string }) => item.label)).not.toContain('了解企业版')
     expect(menu.map((item: { label?: string }) => item.label)).not.toContain('Explore Enterprise')
-    expect(menu[3].label).toBe(locale === 'zh' ? '隐藏 autoCad AI' : 'Hide autoCad AI')
-    expect(menu[3].accelerator).toBe('Command+H')
-    expect(menu[3].role).toBeUndefined()
-    expect(menu[4].label).toBe(locale === 'zh' ? '隐藏其他' : 'Hide Others')
-    expect(menu[4].accelerator).toBe('Command+Alt+H')
-    expect(menu[5].label).toBe(locale === 'zh' ? '全部显示' : 'Show All')
-    expect(menu[7].label).toBe(locale === 'zh' ? '退出 autoCad AI' : 'Quit autoCad AI')
-    expect(menu[7].accelerator).toBe('Command+Q')
-    menu[3].click()
+    expect(menu[4].label).toBe(locale === 'zh' ? '隐藏 autoCad AI' : 'Hide autoCad AI')
+    expect(menu[4].accelerator).toBe('Command+H')
+    expect(menu[4].role).toBeUndefined()
+    expect(menu[5].label).toBe(locale === 'zh' ? '隐藏其他' : 'Hide Others')
+    expect(menu[5].accelerator).toBe('Command+Alt+H')
+    expect(menu[6].label).toBe(locale === 'zh' ? '全部显示' : 'Show All')
+    expect(menu[8].label).toBe(locale === 'zh' ? '退出 autoCad AI' : 'Quit autoCad AI')
+    expect(menu[8].accelerator).toBe('Command+Q')
+    menu[2].click()
     menu[4].click()
     menu[5].click()
-    menu[7].click()
+    menu[6].click()
+    menu[8].click()
+    expect(requestInternalAuthDialog).toHaveBeenCalledWith(mainWindow)
     expect(hide).toHaveBeenCalledOnce()
     expect(sendActionToFirstResponder).toHaveBeenNthCalledWith(1, 'hideOtherApplications:')
     expect(sendActionToFirstResponder).toHaveBeenNthCalledWith(2, 'unhideAllApplications:')

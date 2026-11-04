@@ -66,8 +66,11 @@ describe('Windows caption menus', () => {
     const { actions } = record()
     expect(labels(windowsMenuTemplate('application', 'zh', 1.25, actions))).toContain('实际大小（当前 125%）')
     expect(labels(windowsMenuTemplate('application', 'en', 0.9, actions))).toContain('Actual Size (now 90%)')
+    expect(labels(windowsMenuTemplate('application', 'zh', 1, actions))).toContain('内部账号…')
+    expect(labels(windowsMenuTemplate('application', 'en', 1, actions))).toContain('Internal Account…')
     expect(labels(windowsMenuTemplate('application', 'zh', 1, actions))).not.toContain('导出 Session 日志…')
     expect(labels(windowsMenuTemplate('application', 'en', 1, actions))).not.toContain('Export Session Log…')
+    expect(isDesktopMenuCommand('internal-auth')).toBe(true)
     expect(labels(windowsMenuTemplate('edit', 'zh', 1, actions))).toEqual(
       ['撤销', '重做', '剪切', '复制', '粘贴', '删除', '全选']
     )
