@@ -54,8 +54,11 @@ export function echoTool(_ctx) {
  * Apply the autocad-ai Cordis plugin.
  *
  * Future hooks (Phase 0 intentionally empty — do not implement here yet):
- * - MCP sidecar: launch/configure local stdio or loopback MCP server that
- *   wraps AutoCAD COM/.NET automation; register real CAD tools via that path.
+ * - MCP sidecar: see sibling package `packages/mcp-sidecar` (Node stdio
+ *   `autocad_ping` scaffold). Wire via public `@deepseek-ai/dsh-mcp-client`
+ *   stdio config — placeholder YAML in that package's `examples/`. Production
+ *   replaces the Node process with .NET/COM → AutoCAD; do not invent private
+ *   harness launch APIs here.
  * - AutoCAD delivery path: BOM → layout → DWG only through the local MCP
  *   sidecar, never through remote MCP or OCCT export.
  * - OCCT preview: optional in-process viewer for conversation/shell preview;

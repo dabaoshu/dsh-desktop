@@ -1,0 +1,44 @@
+{
+  "name": "mcp-sidecar",
+  "version": "0.0.1",
+  "description": "Phase 0 local MCP sidecar scaffold for autoCad AI (Node stdio echo; production path is .NET/COM → AutoCAD).",
+  "type": "module",
+  "bin": {
+    "mcp-sidecar": "./bin/mcp-sidecar.js"
+  },
+  "main": "./index.js",
+  "exports": {
+    ".": "./index.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "bin",
+    "index.js",
+    "server.js",
+    "protocol.js",
+    "examples",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "start": "node ./bin/mcp-sidecar.js",
+    "ping-self": "node ./scripts/stdio-smoke.js"
+  },
+  "license": "MIT",
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dabaoshu/dsh-desktop.git",
+    "directory": "packages/mcp-sidecar"
+  },
+  "keywords": [
+    "mcp",
+    "sidecar",
+    "autocad-ai",
+    "stdio",
+    "scaffold"
+  ]
+}
