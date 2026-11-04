@@ -9,7 +9,7 @@ export const SAFE_MODE_BUNDLES = [
   '@deepseek-ai/dsh-web-app'
 ] as const
 
-export const SAFE_MODE_PATCH = `# Managed by DSH Desktop Safe Mode.
+export const SAFE_MODE_PATCH = `# Managed by autoCad AI Safe Mode.
 # Third-party bundles and the normal web profile's patch layer are intentionally omitted.
 - id: agent-default-model
   disabled: false
@@ -85,7 +85,7 @@ export function extractSafeModePatch(sourcePatchText: string): string {
   }
 
   contents.items = kept
-  const header = `# Managed by DSH Desktop Safe Mode.\n# Third-party bundles and non-model web profile patches are intentionally omitted.\n# Model configurations inherited from the normal profile are included below.\n`
+  const header = `# Managed by autoCad AI Safe Mode.\n# Third-party bundles and non-model web profile patches are intentionally omitted.\n# Model configurations inherited from the normal profile are included below.\n`
   return `${header}${String(doc)}`
 }
 

@@ -41,7 +41,7 @@ async function preserved(options, pattern) {
 
 it('roundtrips binary data with spaces and Unicode directories/filenames and replaces the previous archive', async () => {
   const binary = randomBytes(80_000)
-  await writeFile(join(directory, 'win-unpacked', 'DSH Desktop.exe'), binary)
+  await writeFile(join(directory, 'win-unpacked', 'autoCad AI.exe'), binary)
   await writeFile(join(directory, 'win-unpacked', '资源 空格', '中文 space.bin'), binary)
   await writeFile(output, 'previous archive')
   expect(await archiveWindowsRelease(directory, { log })).toBe(output)
@@ -49,7 +49,7 @@ it('roundtrips binary data with spaces and Unicode directories/filenames and rep
   const unpack = join(directory, 'extracted')
   await mkdir(unpack)
   await x({ file: output, cwd: unpack, strict: true })
-  expect(await readFile(join(unpack, 'win-unpacked', 'DSH Desktop.exe'))).toEqual(binary)
+  expect(await readFile(join(unpack, 'win-unpacked', 'autoCad AI.exe'))).toEqual(binary)
   expect(await readFile(join(unpack, 'win-unpacked', '资源 空格', '中文 space.bin'))).toEqual(binary)
   expect((await readdir(directory)).some(name => name.endsWith('.tmp'))).toBe(false)
 })

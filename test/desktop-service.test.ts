@@ -191,7 +191,7 @@ describe('desktop service', () => {
   ])('sends manual=true only for user-initiated rollout bypass checks on %s/%s', async (platform, arch, expectedPlatform) => {
     const { options, request } = fixture()
     const service = new DesktopService({ ...options, platform, arch })
-    const selected = { updateAvailable: true, version: '0.9.0', feedUrl: 'https://dshdesktop.com/updates/archive/0.9.0/' }
+    const selected = { updateAvailable: true, version: '0.9.0', feedUrl: 'https://updates.invalid/autocad-ai/archive/0.9.0/' }
     let policy: { updateAvailable: false } | typeof selected = { updateAvailable: false }
     request.mockImplementation(async (address, init) => {
       const url = new URL(address)
@@ -226,7 +226,7 @@ describe('desktop service', () => {
       new Response('unavailable', { status: 503 }),
       new Response('malformed JSON'),
       Response.json({ updateAvailable: true, version: '0.9.0', feedUrl: 'https://evil.test/' }),
-      Response.json({ updateAvailable: true, version: '0.7.0', feedUrl: 'https://dshdesktop.com/updates/archive/0.7.0/' })
+      Response.json({ updateAvailable: true, version: '0.7.0', feedUrl: 'https://updates.invalid/autocad-ai/archive/0.7.0/' })
     ]) {
       request.mockClear()
       request.mockResolvedValueOnce(response)
@@ -234,7 +234,7 @@ describe('desktop service', () => {
       expect(request).toHaveBeenCalledTimes(1)
       const call = request.mock.calls[0]
       if (!call) throw new Error('Expected an update policy request')
-      expect(new URL(call[0]).pathname).toBe('/crash/v1/updates/check')
+      expect(new URL(call[0]).pathname).toBe('/autocad-ai/service/v1/updates/check')
     }
     request.mockClear()
     const timeout = new DOMException('Update policy request timed out', 'TimeoutError')
@@ -243,7 +243,7 @@ describe('desktop service', () => {
     expect(request).toHaveBeenCalledTimes(1)
     const call = request.mock.calls[0]
     if (!call) throw new Error('Expected an update policy request')
-    expect(new URL(call[0]).pathname).toBe('/crash/v1/updates/check')
+    expect(new URL(call[0]).pathname).toBe('/autocad-ai/service/v1/updates/check')
   })
   it('queries with no channel/arch and rejects invalid or downgraded policy responses', async () => {
     const { service, request } = fixture()
@@ -256,12 +256,12 @@ describe('desktop service', () => {
     expect(new URL(request.mock.calls.at(-1)![0]).searchParams.get('manual')).toBe('true')
     expect(url.searchParams.get('platform')).toBe('mac'); expect(url.searchParams.has('channel')).toBe(false); expect(url.searchParams.has('arch')).toBe(false)
     for (const version of ['0.7.0', '0.8.0', '0.9.0-rc.1', '../../evil', '0.9.0-01']) {
-      request.mockResolvedValue(new Response(JSON.stringify({ updateAvailable: true, version, feedUrl: `https://dshdesktop.com/updates/archive/${version}/` })))
+      request.mockResolvedValue(new Response(JSON.stringify({ updateAvailable: true, version, feedUrl: `https://updates.invalid/autocad-ai/archive/${version}/` })))
       await expect(service.checkUpdate()).rejects.toThrow('Invalid')
     }
     request.mockResolvedValue(new Response(JSON.stringify({ updateAvailable: true, version: '0.9.0', feedUrl: 'https://evil.test/' })))
     await expect(service.checkUpdate()).rejects.toThrow('Invalid')
-    request.mockResolvedValue(new Response(JSON.stringify({ updateAvailable: true, version: '0.9.0', feedUrl: 'https://dshdesktop.com/updates/archive/0.9.0/' })))
+    request.mockResolvedValue(new Response(JSON.stringify({ updateAvailable: true, version: '0.9.0', feedUrl: 'https://updates.invalid/autocad-ai/archive/0.9.0/' })))
     expect(await service.checkUpdate()).toMatchObject({ updateAvailable: true, version: '0.9.0' })
   })
 })

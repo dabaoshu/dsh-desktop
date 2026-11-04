@@ -25,9 +25,9 @@ describe('desktop update policy', () => {
     expect(AUTO_INSTALL_ON_APP_QUIT).toBe(false)
   })
 
-  it('only enables updates for installed macOS and Windows builds', () => {
-    expect(supportsAutoUpdates(true, 'darwin')).toBe(true)
-    expect(supportsAutoUpdates(true, 'win32')).toBe(true)
+  it('keeps auto-updates disabled until a self-hosted feed exists', () => {
+    expect(supportsAutoUpdates(true, 'darwin')).toBe(false)
+    expect(supportsAutoUpdates(true, 'win32')).toBe(false)
     expect(supportsAutoUpdates(true, 'linux')).toBe(false)
     expect(supportsAutoUpdates(false, 'darwin')).toBe(false)
   })
@@ -70,10 +70,10 @@ describe('macOS update metadata', () => {
     }
     expect(merged.version).toBe('0.2.0')
     expect(merged.files.map((file) => file.url)).toEqual([
-      'dsh-desktop-mac-arm64.zip',
-      'dsh-desktop-mac-x64.zip'
+      'autocad-ai-mac-arm64.zip',
+      'autocad-ai-mac-x64.zip'
     ])
-    expect(merged.path).toBe('dsh-desktop-mac-arm64.zip')
+    expect(merged.path).toBe('autocad-ai-mac-arm64.zip')
     expect(merged.releaseDate).toBe('2026-08-14T02:00:00.000Z')
   })
 })
@@ -83,12 +83,12 @@ function metadata(architecture: 'arm64' | 'x64', releaseDate: string) {
     version: '0.2.0',
     files: [
       {
-        url: `dsh-desktop-mac-${architecture}.zip`,
+        url: `autocad-ai-mac-${architecture}.zip`,
         sha512: `zip-${architecture}`,
         size: 100
       },
       {
-        url: `dsh-desktop-mac-${architecture}.dmg`,
+        url: `autocad-ai-mac-${architecture}.dmg`,
         sha512: `dmg-${architecture}`,
         size: 200
       }

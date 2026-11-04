@@ -39,7 +39,7 @@ export function buildDisclaimedUtilityProcessSpec(
       stdio: 'pipe',
       serviceName: 'DSH Harness',
       // Harness loads user-installed plugins and can launch third-party tools.
-      // Keep their TCC requests out of DSH Desktop's responsibility chain in production.
+      // Keep their TCC requests out of autoCad AI's responsibility chain in production.
       disclaim: utilityProcessOptions?.disclaim ?? true
     }
   }

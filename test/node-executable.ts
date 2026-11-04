@@ -2,7 +2,7 @@ import { existsSync } from 'node:fs'
 import { delimiter, join } from 'node:path'
 import { spawnSync } from 'node:child_process'
 
-/** Resolve a real Node binary, skipping Electron shims injected by DSH Desktop. */
+/** Resolve a real Node binary, skipping Electron shims injected by autoCad AI. */
 export function resolveTestNodeExecutable(): string {
   const executable = process.platform === 'win32' ? 'node.exe' : 'node'
   const candidates = (process.env.PATH ?? '')

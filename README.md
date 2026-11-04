@@ -1,11 +1,15 @@
 <h1 align="center">
-  <img src="docs/images/readme-logo-black-rounded.svg" width="64" alt="DSH Desktop logo" valign="middle" />
-  DSH Desktop
+  <img src="docs/images/readme-logo-black-rounded.svg" width="64" alt="autoCad AI logo" valign="middle" />
+  autoCad AI
 </h1>
 
+> [!NOTE]
+> **This repository is the [autoCad AI](https://github.com/dabaoshu/dsh-desktop) desktop shell fork** of open-source [dataelement/dsh-desktop](https://github.com/dataelement/dsh-desktop) (MIT).
+> It isolates Electron identity (`appId` / `productName` / `userData`) for CAD / local MCP work. **Not** an official Dataelem or DSH release, and not DeepSeek's official Desktop. Upstream copyright and the MIT license are preserved in [LICENSE](LICENSE).
+
 <p align="center">
-  <strong>DSH Desktop by Dataelem</strong> is a desktop Agent application built by the Dataelem team on the DeepSeek Harness framework, available in open-source and enterprise editions.<br />
-  Website: <a href="https://www.dshdesktop.com/">www.dshdesktop.com</a> · Open-source repository: <a href="https://github.com/dataelement/dsh-desktop">dataelement/dsh-desktop</a>
+  <strong>Upstream DSH Desktop by Dataelem</strong> is a desktop Agent host built on DeepSeek Harness.<br />
+  Upstream site: <a href="https://www.dshdesktop.com/">www.dshdesktop.com</a> · Upstream source: <a href="https://github.com/dataelement/dsh-desktop">dataelement/dsh-desktop</a> · This fork: <a href="https://github.com/dabaoshu/dsh-desktop">dabaoshu/dsh-desktop</a>
 </p>
 
 <p align="center">

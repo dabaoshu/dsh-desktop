@@ -5,12 +5,12 @@ import { electronNodeExecutable } from '../src/main/runtime/electron-node-execut
 
 describe('electronNodeExecutable', () => {
   it('uses the app Helper on macOS', () => {
-    expect(electronNodeExecutable('/Applications/DSH Desktop.app/Contents/MacOS/DSH Desktop', 'darwin'))
-      .toBe('/Applications/DSH Desktop.app/Contents/Frameworks/DSH Desktop Helper.app/Contents/MacOS/DSH Desktop Helper')
+    expect(electronNodeExecutable('/Applications/autoCad AI.app/Contents/MacOS/autoCad AI', 'darwin'))
+      .toBe('/Applications/autoCad AI.app/Contents/Frameworks/autoCad AI Helper.app/Contents/MacOS/autoCad AI Helper')
   })
 
   it('uses the main executable elsewhere', () => {
-    expect(electronNodeExecutable('C:\\DSH Desktop\\DSH Desktop.exe', 'win32')).toBe('C:\\DSH Desktop\\DSH Desktop.exe')
+    expect(electronNodeExecutable('C:\\autoCad AI\\autoCad AI.exe', 'win32')).toBe('C:\\autoCad AI\\autoCad AI.exe')
     expect(electronNodeExecutable('/opt/dsh/dsh-desktop', 'linux')).toBe('/opt/dsh/dsh-desktop')
   })
 

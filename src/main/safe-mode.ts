@@ -364,7 +364,7 @@ export function buildSafeModeViewModel(options: {
   if (options.locale === 'zh') {
     return {
       locale: 'zh',
-      brand: 'DSH Desktop',
+      brand: 'autoCad AI',
       badge: '安全模式',
       heading: '',
       summary: '当前处于安全模式，尚未恢复正常启动。可能由插件导致，可在此停用后重启验证；插件和数据都会保留。',
@@ -391,7 +391,7 @@ export function buildSafeModeViewModel(options: {
       restartLabel: '重启并验证',
       restartBusyLabel: '正在重启…',
       restartConfirm: safeModeExitConfirmation(blockingGroups, 'zh'),
-      quitLabel: '退出 DSH Desktop',
+      quitLabel: '退出 autoCad AI',
       notice: options.notice,
       noticeSummary: summarizeLongNotice(options.notice, 'zh'),
       noticeTone: options.noticeTone,
@@ -406,7 +406,7 @@ export function buildSafeModeViewModel(options: {
 
   return {
     locale: 'en',
-    brand: 'DSH Desktop',
+    brand: 'autoCad AI',
     badge: 'Safe Mode',
     heading: '',
     summary: 'You are in Safe Mode; normal startup has not recovered. A plugin may be responsible. Disable it here, then restart to verify; plugin files and data are kept.',
@@ -433,7 +433,7 @@ export function buildSafeModeViewModel(options: {
     restartLabel: 'Restart and verify',
     restartBusyLabel: 'Restarting…',
     restartConfirm: safeModeExitConfirmation(blockingGroups, 'en'),
-    quitLabel: 'Quit DSH Desktop',
+    quitLabel: 'Quit autoCad AI',
     notice: options.notice,
     noticeSummary: summarizeLongNotice(options.notice, 'en'),
     noticeTone: options.noticeTone,

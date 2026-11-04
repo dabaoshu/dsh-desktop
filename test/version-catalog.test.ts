@@ -9,13 +9,15 @@ import {
 } from '../src/main/update/version-catalog'
 
 describe('version-catalog constants', () => {
-  it('points the stable feed and index at the dshdesktop domain', () => {
-    expect(STABLE_FEED_URL).toBe('https://dshdesktop.com/updates/latest/')
-    expect(VERSION_INDEX_URL).toBe('https://dshdesktop.com/updates/versions.json')
+  it('points the stable feed and index at the autoCad AI placeholder domain', () => {
+    expect(STABLE_FEED_URL).toBe('https://updates.invalid/autocad-ai/latest/')
+    expect(VERSION_INDEX_URL).toBe('https://updates.invalid/autocad-ai/versions.json')
+    expect(STABLE_FEED_URL).not.toContain('dshdesktop.com')
+    expect(VERSION_INDEX_URL).not.toContain('dshdesktop.com')
   })
 
   it('builds a per-version archive feed url with a trailing slash', () => {
-    expect(archiveFeedUrl('1.2.3')).toBe('https://dshdesktop.com/updates/archive/1.2.3/')
+    expect(archiveFeedUrl('1.2.3')).toBe('https://updates.invalid/autocad-ai/archive/1.2.3/')
   })
 })
 
@@ -54,14 +56,14 @@ describe('parseVersionIndex', () => {
   it('keeps well-formed entries and drops the rest', () => {
     const raw = {
       versions: [
-        { version: '1.2.3', tag: 'v1.2.3', archiveUrl: 'https://dshdesktop.com/updates/archive/1.2.3/' },
+        { version: '1.2.3', tag: 'v1.2.3', archiveUrl: 'https://updates.invalid/autocad-ai/archive/1.2.3/' },
         { version: '', tag: 'v0', archiveUrl: 'x' },
         { nope: true },
         42
       ]
     }
     expect(parseVersionIndex(raw)).toEqual([
-      { version: '1.2.3', tag: 'v1.2.3', archiveUrl: 'https://dshdesktop.com/updates/archive/1.2.3/' }
+      { version: '1.2.3', tag: 'v1.2.3', archiveUrl: 'https://updates.invalid/autocad-ai/archive/1.2.3/' }
     ])
   })
 

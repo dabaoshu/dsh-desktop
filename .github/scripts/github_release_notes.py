@@ -28,7 +28,7 @@ def make_anchor(tag: str, lang: str) -> str:
 
 
 PROMPT_TEMPLATE = """\
-你是 DSH Desktop 的发布说明编辑。你的任务是基于下面的代码改动证据，产出类似于 DeepSeek Harness 官方 Release 格式的【中英文双语】GitHub Release Note（Markdown）。
+你是 autoCad AI 的发布说明编辑。你的任务是基于下面的代码改动证据，产出类似于 DeepSeek Harness 官方 Release 格式的【中英文双语】GitHub Release Note（Markdown）。
 
 格式规范（严格参考 DeepSeek Harness 格式）：
 1. 首行必须为中英文锚点导航栏：

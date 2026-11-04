@@ -11,14 +11,24 @@ vi.mock('electron', () => ({ app: { isPackaged: true, getVersion: () => '0.13.0'
 vi.mock('electron-updater', () => ({ default: { autoUpdater: mocks.updater } }))
 vi.mock('../src/main/desktop-service', () => ({ checkDesktopUpdate: vi.fn() }))
 vi.mock('../src/main/update/version-catalog', async original => ({ ...await original<object>(), fetchAvailableReleases: mocks.catalog }))
+/** Phase 0 disables auto-updates by default; rollback manager tests still exercise the installer path. */
+vi.mock('../src/main/update/update-policy', async importOriginal => ({
+  ...await importOriginal<object>(),
+  supportsAutoUpdates: () => true
+}))
 let manager: typeof import('../src/main/update/update-manager')
+const originalPlatform = process.platform
+const originalArch = process.arch
 beforeEach(async () => {
   vi.resetModules()
   vi.clearAllMocks()
   mocks.handlers.clear()
+  // Rollback only supports packaged macOS/Windows; pin a supported identity on Linux CI hosts.
+  Object.defineProperty(process, 'platform', { value: 'win32', configurable: true })
+  Object.defineProperty(process, 'arch', { value: 'x64', configurable: true })
   mocks.root = await mkdtemp(join(tmpdir(), 'dsh-rollback-manager-'))
   await new ApplicationRollback(join(mocks.root, 'application-rollback.json'), {
-    version: '0.11.2', platform: process.platform, arch: process.arch, packaged: true
+    version: '0.11.2', platform: 'win32', arch: 'x64', packaged: true
   }).recordUpgrade('0.13.0')
   mocks.updater.on.mockImplementation((event: string, callback: (info: { version: string }) => void) => mocks.handlers.set(event, callback))
   mocks.catalog.mockResolvedValue([{ version: '0.11.2' }, { version: '0.12.1' }])
@@ -32,7 +42,12 @@ beforeEach(async () => {
   })
   manager = await import('../src/main/update/update-manager')
 })
-afterEach(async () => { manager.stopUpdateManager(); await rm(mocks.root, { recursive: true, force: true }) })
+afterEach(async () => {
+  manager.stopUpdateManager()
+  Object.defineProperty(process, 'platform', { value: originalPlatform, configurable: true })
+  Object.defineProperty(process, 'arch', { value: originalArch, configurable: true })
+  await rm(mocks.root, { recursive: true, force: true })
+})
 
 it('keeps recovery downgrade closed without a verified data compatibility policy', async () => {
   manager.startUpdateManager({ prepareToInstall: async () => {} })
@@ -43,7 +58,7 @@ it('keeps recovery downgrade closed without a verified data compatibility policy
 it('downloads only the actual pre-upgrade version and invokes the existing verified installer', async () => {
   manager.startUpdateManager({ prepareToInstall: async () => {}, rollbackCompatibility: async () => ({ compatible: true }) })
   await manager.rollbackApplication()
-  expect(mocks.updater.setFeedURL).toHaveBeenCalledWith({ provider: 'generic', url: 'https://dshdesktop.com/updates/archive/0.11.2/' })
+  expect(mocks.updater.setFeedURL).toHaveBeenCalledWith({ provider: 'generic', url: 'https://updates.invalid/autocad-ai/archive/0.11.2/' })
   expect(mocks.updater.quitAndInstall).toHaveBeenCalledWith(false, true)
   expect(await manager.getApplicationRollbackStatus()).toMatchObject({ available: false, reason: 'rollback-installing' })
 })

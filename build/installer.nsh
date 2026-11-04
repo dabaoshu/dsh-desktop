@@ -93,7 +93,7 @@
       ; CHECK_APP_RUNNING force-kills the previous process, so will-quit never
       ; clears the session marker. Same-version overwrite would otherwise look
       ; like an unclean-exit. Delete is a no-op when the file is absent.
-      Delete "$APPDATA\dsh-desktop\desktop-service\session.json"
+      Delete "$APPDATA\autocad-ai\desktop-service\session.json"
     !macroend
   !endif
 !endif

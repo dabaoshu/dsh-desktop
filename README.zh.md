@@ -1,11 +1,15 @@
 <h1 align="center">
-  <img src="docs/images/readme-logo-black-rounded.svg" width="64" alt="DSH Desktop Logo" valign="middle" />
-  DSH Desktop
+  <img src="docs/images/readme-logo-black-rounded.svg" width="64" alt="autoCad AI Logo" valign="middle" />
+  autoCad AI
 </h1>
 
+> [!NOTE]
+> **本仓库是 [autoCad AI](https://github.com/dabaoshu/dsh-desktop) 的桌面壳 fork**，基于开源 [dataelement/dsh-desktop](https://github.com/dataelement/dsh-desktop)（MIT）。
+> 用途：为 CAD / 本机 MCP 集成提供隔离的 Electron 宿主（独立 `appId` / `productName` / `userData`）。**不是** Dataelem / DSH 官方发行版，也不冒充 DeepSeek 官方 Desktop。上游版权与 MIT 许可保留见 [LICENSE](LICENSE)。
+
 <p align="center">
-  <strong>DSH Desktop by Dataelem</strong>（DSH 客户端）是 Dataelem 团队基于 DeepSeek Harness 框架打造的桌面 Agent 应用，提供开源版与企业版。<br />
-  官方网站：<a href="https://www.dshdesktop.com/">www.dshdesktop.com</a> · 开源仓库：<a href="https://github.com/dataelement/dsh-desktop">dataelement/dsh-desktop</a>
+  <strong>上游 DSH Desktop by Dataelem</strong> 是基于 DeepSeek Harness 的桌面 Agent 宿主。<br />
+  上游官网：<a href="https://www.dshdesktop.com/">www.dshdesktop.com</a> · 上游开源：<a href="https://github.com/dataelement/dsh-desktop">dataelement/dsh-desktop</a> · 本 fork：<a href="https://github.com/dabaoshu/dsh-desktop">dabaoshu/dsh-desktop</a>
 </p>
 
 <p align="center">

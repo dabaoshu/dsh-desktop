@@ -228,7 +228,7 @@ export async function ensurePnpmShim(home = dshHome(), options = {}) {
   )
 
   // pnpm is reached through this shim by every profile package operation —
-  // DSH Desktop's installer and the community market alike — so the runner it
+  // autoCad AI's installer and the community market alike — so the runner it
   // points at is where a Windows locked rename gets recovered for both. A
   // runner that cannot be staged must not take the shims down with it: pnpm
   // still has to be reachable, just without the recovery, and the harness log
@@ -374,7 +374,7 @@ export function createDesktopProfilesService(home = dshHome()) {
     list: () => [current],
     select: async (name) => {
       if (name !== MARKET_PROFILE) {
-        throw new Error(`DSH Desktop only exposes the ${MARKET_PROFILE} profile.`)
+        throw new Error(`autoCad AI only exposes the ${MARKET_PROFILE} profile.`)
       }
     }
   })
@@ -598,7 +598,7 @@ export function createDesktopPnpmService(options) {
    */
   const runExternalMarketPluginInstall = (args, invokingDir, signal) => {
     validatePluginOperation(args, invokingDir)
-    if (closed) throw new Error('The DSH Desktop pnpm service has been disposed.')
+    if (closed) throw new Error('The autoCad AI pnpm service has been disposed.')
     if (signal?.aborted) throw signal.reason ?? new Error('The package operation was aborted.')
     if (active) throw new Error('Another desktop pnpm operation is already running.')
     const spec = args.slice(1).find((argument) => !argument.startsWith('-'))
@@ -670,7 +670,7 @@ export function createDesktopPnpmService(options) {
       throw new Error('A workbench install needs the package name it provides.')
     }
     if (typeof expectedVersion !== 'string' || !expectedVersion) throw new Error('A workbench install needs an exact version.')
-    if (closed) throw new Error('The DSH Desktop pnpm service has been disposed.')
+    if (closed) throw new Error('The autoCad AI pnpm service has been disposed.')
     if (signal?.aborted) throw signal.reason ?? new Error('The package operation was aborted.')
     if (active) throw new Error('Another desktop pnpm operation is already running.')
 
@@ -725,7 +725,7 @@ export function createDesktopPnpmService(options) {
 
   const removeWorkbenchGeneration = (pluginName, invokingDir, signal) => {
     validatePluginOperation(['remove', pluginName], invokingDir)
-    if (closed) throw new Error('The DSH Desktop pnpm service has been disposed.')
+    if (closed) throw new Error('The autoCad AI pnpm service has been disposed.')
     if (signal?.aborted) throw signal.reason ?? new Error('The package operation was aborted.')
     if (active) throw new Error('Another desktop pnpm operation is already running.')
     const handle = asHandle(async ({ write, isCancelled }) =>
@@ -753,7 +753,7 @@ export function createDesktopPnpmService(options) {
 
   const runPlugin = (args, invokingDir, signal) => {
     validatePluginOperation(args, invokingDir)
-    if (closed) throw new Error('The DSH Desktop pnpm service has been disposed.')
+    if (closed) throw new Error('The autoCad AI pnpm service has been disposed.')
     if (signal?.aborted) throw signal.reason ?? new Error('The package operation was aborted.')
     if (active) throw new Error('Another desktop pnpm operation is already running.')
 

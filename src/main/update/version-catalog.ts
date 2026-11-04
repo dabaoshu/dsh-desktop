@@ -1,14 +1,21 @@
 import type { AvailableRelease } from '../../shared/contracts'
+import {
+  STABLE_FEED_URL as BRAND_STABLE_FEED_URL,
+  VERSION_INDEX_URL as BRAND_VERSION_INDEX_URL,
+  archiveFeedUrl as brandArchiveFeedUrl
+} from '../../shared/brand'
 
 export type { AvailableRelease }
 
-export const STABLE_FEED_URL = 'https://dshdesktop.com/updates/latest/'
-export const VERSION_INDEX_URL = 'https://dshdesktop.com/updates/versions.json'
+/** 重导出壳品牌占位更新源，供 electron-updater 与版本目录共用。 */
+export const STABLE_FEED_URL = BRAND_STABLE_FEED_URL
+export const VERSION_INDEX_URL = BRAND_VERSION_INDEX_URL
 
 const INDEX_TIMEOUT_MS = 8_000
 
+/** @see brandArchiveFeedUrl */
 export function archiveFeedUrl(version: string): string {
-  return `https://dshdesktop.com/updates/archive/${version}/`
+  return brandArchiveFeedUrl(version)
 }
 
 /** Split "1.2.3-rc.1" into ([1,2,3], "rc.1"). Non-numeric segments read as 0. */

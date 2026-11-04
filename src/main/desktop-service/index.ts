@@ -43,7 +43,7 @@ export function createAggregatedUploadConfirmation(options: {
               type: 'question',
               title: '发送故障报告',
               message: '是否发送本次故障报告，帮助排查问题？',
-              detail: `版本：${report.version}\n故障类型：${report.kind}${countDetail}\n\n报告将发送到 https://dshdesktop.com/crash，包含安装 ID、版本、平台、故障时间、错误信息、故障时的系统内存/进程资源和显卡信息，以及 harness.log 最后最多 100 行（本次 ${report.lines.length} 行）。\n\n点击“发送一次”仅同意发送本次报告；选择“不发送”将丢弃本次待传报告，不影响继续使用。`,
+              detail: `版本：${report.version}\n故障类型：${report.kind}${countDetail}\n\n本 fork 暂未启用故障上报服务；即使选择发送也不会连向上游 dshdesktop.com。报告仅保存在本机待传队列。\n\n点击“发送一次”或“不发送”都会清理本次提示；不影响继续使用。`,
               buttons: ['不发送', '发送一次'],
               defaultId: 0,
               cancelId: 0,

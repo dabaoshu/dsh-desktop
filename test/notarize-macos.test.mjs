@@ -6,7 +6,7 @@ import { verifyMacOSMicrophonePermissions } from '../scripts/verify-macos-permis
 
 vi.mock('../scripts/verify-macos-permissions.mjs', () => ({ verifyMacOSMicrophonePermissions: vi.fn() }))
 
-const options = { appPath: '/fixture/DSH Desktop.app' }
+const options = { appPath: '/fixture/autoCad AI.app' }
 const stapleError = new Error('Failed to staple your application with code: 68\nThe network connection was lost.')
 const commandError = code => Object.assign(new Error('stapler failed'), { code })
 const dependencies = () => ({ submit: vi.fn(), run: vi.fn(), wait: vi.fn(), log: vi.fn() })
@@ -148,9 +148,9 @@ describe('macOS app notarization', () => {
       vi.mocked(verifyMacOSMicrophonePermissions).mockRejectedValueOnce(new Error('missing audio-input'))
       await expect(afterSign({
         electronPlatformName: 'darwin', appOutDir: '/fixture',
-        packager: { appInfo: { productFilename: 'DSH Desktop' } }
+        packager: { appInfo: { productFilename: 'autoCad AI' } }
       })).rejects.toThrow('missing audio-input')
-      expect(verifyMacOSMicrophonePermissions).toHaveBeenCalledWith(join('/fixture', 'DSH Desktop.app'))
+      expect(verifyMacOSMicrophonePermissions).toHaveBeenCalledWith(join('/fixture', 'autoCad AI.app'))
     } finally { process.env = saved }
   })
 

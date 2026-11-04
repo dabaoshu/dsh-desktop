@@ -8,7 +8,7 @@ describe('launchd guard', () => {
 
   it('treats an application service name as an ordinary GUI launch', () => {
     expect(
-      isDaemonLaunch({ XPC_SERVICE_NAME: 'application.io.dsh.desktop.44736077.44736083' }, 'darwin')
+      isDaemonLaunch({ XPC_SERVICE_NAME: 'application.ai.autocad.desktop.44736077.44736083' }, 'darwin')
     ).toBe(false)
   })
 

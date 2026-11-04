@@ -105,8 +105,8 @@ describe('window restart prompt entry point', () => {
     expect(actions).toEqual(['flush', 'dialog', 'relaunch', 'quit'])
     const shown = context.dialog.showMessageBox.mock.calls[0]?.[0]
     expect(shown).toEqual({
-      type: 'none', title: 'DSH Desktop', message: '窗口暂时无法显示',
-      detail: '请重新启动 DSH Desktop 后重试。', buttons: ['重新启动'],
+      type: 'none', title: 'autoCad AI', message: '窗口暂时无法显示',
+      detail: '请重新启动 autoCad AI 后重试。', buttons: ['重新启动'],
       defaultId: 0, cancelId: 0, noLink: true
     })
     expect(JSON.stringify(shown)).not.toMatch(/load failed|http:|credential-secret|query-secret|fragment-secret|Error:| at /)

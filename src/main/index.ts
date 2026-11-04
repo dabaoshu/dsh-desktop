@@ -38,6 +38,7 @@ import {
 } from 'electron'
 import { HarnessShell } from './harness-shell'
 import { HARNESS_SHELL_URL, HARNESS_BOOT_DOCUMENT_CHANNEL, HARNESS_BOOT_CHANNEL, HARNESS_BOOT_FAILED_CHANNEL, isHarnessShellUrl, isHarnessBootPage } from '../shared/harness-boot'
+import { PRODUCT_NAME, PRODUCT_NAME_DEV, USER_DATA_DIR } from '../shared/brand'
 import {
   DEFAULT_HARNESS_PORT,
   extractDuplicateAgentPresetId,
@@ -614,17 +615,18 @@ function applyWindowChromeTheme(window: BrowserWindow, isDark: boolean): void {
 
 function configureAppIdentity(): void {
   if (developmentBuild) {
-    app.setName('DSH Desktop Dev')
+    app.setName(PRODUCT_NAME_DEV)
     app.setPath('userData', join(app.getPath('appData'), developmentConfig.profile))
     return
   }
 
-  app.setName('DSH Desktop')
-  // Keep the historical lowercase directory stable across product-name and
-  // branding changes. Harness stores workspaces, sessions, credentials, and
-  // custom presets below userData, so deriving this path from app.getName()
-  // would make an ordinary upgrade look like a fresh installation.
-  app.setPath('userData', join(app.getPath('appData'), 'dsh-desktop'))
+  app.setName(PRODUCT_NAME)
+  // Keep the lowercase directory stable across product-name and branding
+  // changes. Harness stores workspaces, sessions, credentials, and custom
+  // presets below userData, so deriving this path from app.getName() would
+  // make an ordinary upgrade look like a fresh installation. autoCad AI uses
+  // a distinct directory so it never shares Profile data with upstream autoCad AI.
+  app.setPath('userData', join(app.getPath('appData'), USER_DATA_DIR))
 }
 
 async function syncNativeTheme(window: BrowserWindow): Promise<void> {
@@ -1106,10 +1108,10 @@ function ensureTray(): void {
 
   const locale = harnessLocale()
   tray = new Tray(desktopIconPath())
-  tray.setToolTip('DSH Desktop')
+  tray.setToolTip('autoCad AI')
   tray.setContextMenu(
     Menu.buildFromTemplate([
-      { label: locale === 'zh' ? '显示 DSH Desktop' : 'Show DSH Desktop', click: restoreMainWindow },
+      { label: locale === 'zh' ? '显示 autoCad AI' : 'Show autoCad AI', click: restoreMainWindow },
       { type: 'separator' },
       { label: locale === 'zh' ? '退出' : 'Exit', click: () => app.quit() }
     ])
@@ -1474,7 +1476,7 @@ async function quarantineInstalledLaunchAgentsForUpdate(dshHome: string): Promis
   }
   if (result.failures.length > 0) {
     for (const failure of result.failures) runtime.note(`[desktop] pre-update launch agent: ${failure}`)
-    throw new Error('Unable to stop background services before replacing DSH Desktop.')
+    throw new Error('Unable to stop background services before replacing autoCad AI.')
   }
 }
 
@@ -1909,7 +1911,7 @@ function registerHarnessHandlers(): void {
   ipcMain.removeHandler('harness:restart')
   ipcMain.handle('harness:restart', async (event) => {
     if (!mainWindow || mainWindow.isDestroyed() || event.sender !== mainWindow.webContents) {
-      throw new Error('Harness restart is only available from the DSH Desktop window.')
+      throw new Error('Harness restart is only available from the autoCad AI window.')
     }
     if (runtime.snapshot().phase !== 'ready') {
       throw new Error('Harness is not ready to restart.')
@@ -1979,7 +1981,7 @@ function registerHarnessHandlers(): void {
   ipcMain.handle('desktop-titlebar:set-theme', (event, isDark: unknown) => {
     assertTrustedMainWindowEvent(event)
     if (typeof isDark !== 'boolean') {
-      throw new Error('The DSH Desktop titlebar theme must be a boolean.')
+      throw new Error('The autoCad AI titlebar theme must be a boolean.')
     }
     if (process.platform === 'win32' && mainWindow) {
       applyWindowChromeTheme(mainWindow, isDark)
@@ -2022,7 +2024,7 @@ function assertTrustedMainWindowEvent(event: IpcMainEvent | IpcMainInvokeEvent):
     event.sender !== mainWindow.webContents ||
     event.senderFrame !== mainWindow.webContents.mainFrame
   ) {
-    throw new Error('This action is only available from the main DSH Desktop window.')
+    throw new Error('This action is only available from the main autoCad AI window.')
   }
 }
 
@@ -2059,8 +2061,8 @@ async function showAbout(window: BrowserWindow): Promise<void> {
   const checkForUpdatesLabel = locale === 'zh' ? '检查更新' : 'Check for Updates'
   const result = await dialog.showMessageBox(window, {
     type: 'info',
-    title: 'DSH Desktop',
-    message: locale === 'zh' ? '关于 DSH Desktop' : 'About DSH Desktop',
+    title: 'autoCad AI',
+    message: locale === 'zh' ? `关于 ${PRODUCT_NAME}` : `About ${PRODUCT_NAME}`,
     detail: aboutDetail(
       app.getVersion(),
       bundledHarnessVersion(bundledRuntimeRoot()),
@@ -2220,7 +2222,7 @@ function reportNativeRecoveryFailure(failure: unknown): void {
   console.error('[desktop] native recovery failed', failureMessage)
   if (quitting || gpuFallbackRelaunching) return
   const locale = harnessLocale()
-  dialog.showErrorBox('DSH Desktop', applicationText(locale, 'windowRecovery.heading') + '\n\n' +
+  dialog.showErrorBox('autoCad AI', applicationText(locale, 'windowRecovery.heading') + '\n\n' +
     applicationText(locale, 'windowRecovery.description'))
 }
 
@@ -3325,7 +3327,7 @@ function installMenu(): void {
           label: app.name,
           submenu: [
             {
-              label: isChinese ? '关于 DSH Desktop' : 'About DSH Desktop',
+              label: isChinese ? `关于 ${PRODUCT_NAME}` : `About ${PRODUCT_NAME}`,
               click: () => {
                 if (mainWindow && !mainWindow.isDestroyed()) {
                   void showAbout(mainWindow).catch(showUnexpectedError)
@@ -3337,10 +3339,7 @@ function installMenu(): void {
               accelerator: 'CmdOrCtrl+U',
               click: () => void checkForUpdates(true).catch(showUnexpectedError)
             },
-            {
-              label: isChinese ? '了解企业版' : 'Explore Enterprise',
-              click: () => void shell.openExternal('https://dshdesktop.com/zh/enterprise/').catch(showUnexpectedError)
-            },
+            // 上游「了解企业版」入口已移除：本仓为 autoCad AI 壳 fork，不导向 dshdesktop.com 企业版。
             { type: 'separator' as const },
             // Role titles stay in Electron's English and can be rewritten to the
             // machine language. These labels follow the language chosen in Desktop.
@@ -3455,7 +3454,7 @@ async function showMobilePairing(): Promise<void> {
     const options: MessageBoxOptions = {
       type: 'info',
       message: 'Harness is still starting.',
-      detail: 'Wait until DSH Desktop is ready, then connect your phone again.',
+      detail: 'Wait until autoCad AI is ready, then connect your phone again.',
       buttons: ['OK']
     }
     await (mainWindow ? dialog.showMessageBox(mainWindow, options) : dialog.showMessageBox(options))
@@ -3989,7 +3988,7 @@ async function bootstrap(): Promise<void> {
     }
   })
   if (developmentRepairDemo && mainWindow) {
-    mainWindow.setTitle('DSH Desktop · V0.13.0 维修演示')
+    mainWindow.setTitle('autoCad AI · V0.13.0 维修演示')
     mainWindow.on('page-title-updated', event => event.preventDefault())
   }
   installMenu()

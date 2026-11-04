@@ -1,5 +1,5 @@
 /**
- * Host half of the DSH Desktop first-run onboarding notice.
+ * Host half of the autoCad AI first-run onboarding notice.
  *
  * Publishes eligibility through Config and keeps the legacy wizardVersion
  * field readable. Desktop host entries are command-line overlay entries, so
